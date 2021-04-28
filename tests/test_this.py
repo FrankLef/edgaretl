@@ -1,6 +1,5 @@
-from src import core
+from src.edgar.xbrlrss import write
 
 
-def test_sum_this():
-    x = range(3)
-    assert core.sum_this(x) == 3
+def test_this():
+    assert sum(range(3)) == 3
