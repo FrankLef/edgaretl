@@ -1,3 +1,3 @@
-# repo-template
-Template for Python.
-Inspired by [Hitchhiker's guide to Python]:(https://docs.python-guide.org/writing/structure/)
+# EDGAR
+Doenload XBRL files from EDGA
+[Inspired]https://www.youtube.com/watch?v=2Oe9ZqXVGME
