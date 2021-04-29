@@ -9,6 +9,8 @@ def fetch_rss(path: Path, period: datetime = datetime.now(),
               head: bool = False, check_url: bool = False, check_path: bool = False):
     # add the filename to the path
     path = write.write_path(path=path, period=period, check=check_path)
+    # create the directory if it doesn't already exist
+    # path.mkdir(parents=True, exist_ok=True)
 
     # write the url
     url = write.write_url(url=url, period=period, check=check_url)
@@ -16,19 +18,19 @@ def fetch_rss(path: Path, period: datetime = datetime.now(),
     # if required, only process HEAD and return result
     if head:
         try:
-            r = requests.head(url)
+            with requests.head(url) as r:
+                return r.status_code
         except requests.exceptions.ConnectionError as e:
             msg = f"The url is invalid, verify it carefully.\n{url}"
             raise requests.exceptions.ConnectionError(msg) from e
-        return r.status_code
 
     # source:
     # https://stackoverflow.com/questions/31126596/saving-response-from-requests-to-file
     with requests.get(url) as r:
-        with open(file=path, mode='w') as f:
+        with path.open(mode='w') as f:
             if r.status_code == 200:
                 f.write(r.text)
-                # NOTE" lines to use if you want byte content instead of text.
+                # NOTE: lines to use if you want byte content instead of text.
                 # mode='wb' could be used to download binary file
                 # use f.write(r.content) when open(mode='wb')
                 # f.write(r.content)
@@ -38,7 +40,7 @@ def fetch_rss(path: Path, period: datetime = datetime.now(),
             else:
                 msg = f"\nstatus {r.status_code}: Connection error with SEC other than access not granted.\n"
                 raise requests.exceptions.ConnectionError(msg)
-    return r.status_code
+            return r.status.code
 
 # NOTE: How to do it with urllib3. requets uses urlib3.
 # source:

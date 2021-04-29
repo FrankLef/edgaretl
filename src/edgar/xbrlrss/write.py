@@ -3,8 +3,7 @@ from datetime import datetime
 import requests
 
 
-def write_path(path: Path, period: datetime = datetime.now(),
-               prefix: str = 'xbrlrss', ext: str = '.xml', check: bool = False) -> Path:
+def write_path(path: Path, period: datetime = datetime.now(), check: bool = False) -> Path:
     """Write the full file name for the rss feed file using a given path.
 
     Args:
@@ -24,9 +23,8 @@ def write_path(path: Path, period: datetime = datetime.now(),
     if not isinstance(path, Path):
         msg = ("The data directory path must be a pathlib.Path object.")
         raise ValueError(msg)
-
-    fn = prefix + '_'
-    fn += '-'.join((str(period.year), str(period.month).zfill(2))) + ext
+    # path.mkdir(parents=True, exist_ok=True)
+    fn = write_fn(period=period)
     path = path.joinpath(fn)
     if check:
         if path.exists:
@@ -35,9 +33,13 @@ def write_path(path: Path, period: datetime = datetime.now(),
     return path
 
 
+def write_fn(period: datetime = datetime.now(), prefix: str = 'xbrlrss', ext: str = '.xml') -> str:
+    fn = '-'.join((prefix, str(period.year), str(period.month).zfill(2))) + ext
+    return fn
+
+
 def write_url(url: str = 'https://www.sec.gov/Archives/edgar/monthly',
-              period: datetime = datetime.now(),
-              prefix: str = 'xbrlrss', ext: str = '.xml', check: bool = False) -> str:
+              period: datetime = datetime.now(), check: bool = False) -> str:
     """Write full url to of xbrl rss feed
 
     Args:
@@ -59,13 +61,14 @@ def write_url(url: str = 'https://www.sec.gov/Archives/edgar/monthly',
         msg = f"The period must be between {limits[0]} and {limits[1]}.\nperiod: {period}"
         raise ValueError(msg)
 
-    doc = "-".join((prefix, str(period.year), str(period.month).zfill(2)))
-    url = '/'.join((url, doc)) + ext
+    fn = write_fn(period=period)
+    url = requests.compat.urljoin(url, fn)
 
     # validate the url before using it
     if check:
         try:
-            r = requests.head(url)
+            with requests.head(url) as r:
+                return url
         except requests.exceptions.ConnectionError as e:
             msg = f"The url is invalid, verify it carefully.\n{url}"
             raise requests.exceptions.ConnectionError(msg) from e

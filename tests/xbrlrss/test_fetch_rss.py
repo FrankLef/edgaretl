@@ -19,3 +19,9 @@ def test_fetch_rss_head():
 def test_fetch_rss_head_err():
     with pytest.raises(requests.exceptions.ConnectionError):
         fetch.fetch_rss(path=path, period=period, url=WRONG_URL, head=True)
+
+
+def test_fetch_rss():
+    path = Path.cwd().joinpath('data', 'xbrlrss', str(period.year))
+    assert fetch.fetch_rss(
+        path=path, period=datetime.now(), url=TEST_URL) == 200
