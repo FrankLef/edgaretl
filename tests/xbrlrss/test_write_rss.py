@@ -33,33 +33,19 @@ def test_write_url_err_url():
         write.write_url(url=url, check=True)
 
 
-def test_write_dir():
-    """Test write_dir with default values.
-    """
-    year = datetime.now().year
-    target = Path.cwd()
-    target = target.joinpath('data', 'xbrlrss', str(year))
-    assert write.write_dir(year=year) == target
-
-
-def test_write_fn():
-    """Test write_fn with default values
+def test_write_path():
+    """Test write_path() with default values
     """
     now = datetime.now()
-    a_dir = write.write_dir(year=now.year)
+    path = Path.cwd().joinpath('data', 'xbrlrss', str(now.year))
     a_file = 'xbrlrss' + '_'
     a_file += '-'.join((str(now.year), str(now.month).zfill(2))) + '.xml'
-    target = a_dir.joinpath(a_file)
-    assert write.write_fn(dir=a_dir) == target
+    target = path.joinpath(a_file)
+    assert write.write_path(path=path) == target
 
 
-def test_write_fn_err_dir():
-    """Test write-fn error: the dir arg must be a pathlib.Path object
+def test_write_path_err_path():
+    """Test write_path() error: the path arg must be a pathlib.Path object
     """
     with pytest.raises(ValueError):
-        write.write_fn(dir='wrong, must be a pathlib.Path object')
-
-
-def test_write_fn_err_check():
-    with pytest.raises(ValueError):
-        write.write_fn(dir=Path.cwd().joinpath("WONG"), check=True)
+        write.write_path(path='wrong, must be a pathlib.Path object')
