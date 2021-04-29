@@ -22,7 +22,7 @@ def test_write_url():
 def test_write_url_err():
     """Test write_url() with invalid url
     """
-    url = 'https://' + '/'.join(('url', 'invalid'))
+    url = '/'.join(('https:/', 'url', 'invalid'))
     with pytest.raises(requests.exceptions.ConnectionError):
         write.write_url(url=url)
 
