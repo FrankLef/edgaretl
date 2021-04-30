@@ -11,13 +11,13 @@ with open('LICENSE') as f:
     license = f.read()
 
 setup(
-    name='sample',
+    name='edgar',
     version='0.1.0',
-    description='Sample package for Python-Guide.org',
+    description='Downlad XBRL files from EDGAR',
     long_description=readme,
     author='Kenneth Reitz',
-    author_email='me@kennethreitz.com',
-    url='https://github.com/kennethreitz/samplemod',
+    author_email='flefebvre01@hotmail.com',
+    url='https://github.com/FrankLef/edgar.git',
     license=license,
     packages=find_packages(exclude=('tests', 'docs'))
 )

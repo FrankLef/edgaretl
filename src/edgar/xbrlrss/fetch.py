@@ -4,50 +4,35 @@ import requests
 from src.edgar.xbrlrss import write
 
 
-def fetch_rss(path: Path, period: datetime = datetime.now(),
-              url: str = 'https://www.sec.gov/Archives/edgar/monthly',
-              head: bool = False, check_url: bool = False, check_path: bool = False):
-    # add the filename to the path
-    path = write.write_path(path=path, period=period, check=check_path)
-    # create the directory if it doesn't already exist
-    # path.parent.mkdir(parents=True, exist_ok=True)
+def fetch_rss(url: str, path: Path = Path.cwd(), period: datetime = datetime.now(),
+              head: bool = False, overwrite: bool = False):
 
-    # write the url
-    url = write.write_url(url=url, period=period, check=check_url)
-
-    if head:
-        try:
-            with requests.head(url) as r:
-                return r.status_code
-        except requests.exceptions.ConnectionError as e:
-            msg = f"The url is invalid, verify it carefully.\n{url}"
-            raise requests.exceptions.ConnectionError(msg) from e
+    # create the file name and add it to the path
+    if path.exists():
+        fn = write.write_fn(period=period)
+        path = path.joinpath(fn)
     else:
-        # source:
-        # https://stackoverflow.com/questions/31126596/saving-response-from-requests-to-file
-        with requests.get(url) as r:
+        msg = "The directory des not exist.\n{path}"
+        raise FileNotFoundError(msg)
+
+    # don't process a file that already exists unless required
+    if not head and path.exists and not overwrite:
+        msg = f"File already exists and will be skiped.\n{fn}"
+        raise FileExistsError(msg)
+
+    # add filename to the url
+    url_fn = write.write_url(url=url, fn=fn)
+
+    # make the request
+    if not head:
+        with requests.get(url_fn) as r:
             with path.open(mode='w') as f:
                 if r.status_code == 200:
                     f.write(r.text)
-                    # NOTE: lines to use if you want byte content instead of text.
-                    # mode='wb' could be used to download binary file
-                    # use f.write(r.content) when open(mode='wb')
-                    # f.write(r.content)
-    return r.status_code
+                    # msg = f"\"{fn}\" download OK. Content length = {r.headers['content-length']}"
+                    # print(msg)
+    else:
+        with requests.head(url_fn) as r:
+            pass
 
-# NOTE: How to do it with urllib3. requets uses urlib3.
-# source:
-# https://urllib3.readthedocs.io/en/latest/user-guide.html
-# https://stackoverflow.com/questions/27387783/how-to-download-a-file-with-urllib3
-# from urllib3 import PoolManager
-# http = PoolManager()
-# with http.request(method='GET', url=url, preload_content=False) as r:
-#     with open(file=path, mode='wb') as f:
-#         if r.status == 200:
-#             f.write(r.data)
-#         elif r.status == 403:
-#             msg = f"\nstatus {r.status}: Access not granted by SEC. Just retry later.\n"
-#             raise ConnectionRefusedError(msg)
-#         else:
-#             msg = f"status {r.status}: Connection error with SEC other than access not granted."
-#             raise ConnectionError(msg)
+    return r.status_code

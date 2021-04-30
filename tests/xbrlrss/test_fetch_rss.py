@@ -3,32 +3,47 @@ from pathlib import Path
 from datetime import datetime
 import responses
 import requests
+from src.edgar import registry
+from src.edgar.xbrlrss import write
 from src.edgar.xbrlrss import fetch
 
-TEST_URL = 'https://httpbin.org'  # site build explicitly for testing, nice!
-WRONG_URL = "http://WRONG_URL"
-EDGAR_URL = 'http://www.sec.gov/Archives/edgar/monthly'
+prefix = registry.rss()  # we use the prefix also for the subdirectory, discretionary
+test_url = str(registry.test_url())
+egdar_url = registry.edgar_url(0)
+month_url = registry.edgar_url(1)
+oldmonth_url = registry.edgar_url(2)
 
 a_period = datetime(2021, 1, 1)
+# we use 'xbrlrss' for the subdirectory
 a_dir = Path.cwd().joinpath('data', 'xbrlrss', str(a_period.year))
-a_file = "-".join(('xbrlrss', str(a_period.year),
-                  str(a_period.month).zfill(2))) + '.xml'
+a_file = write.write_fn(period=a_period)
 a_path = a_dir.joinpath(a_file)
-a_url = EDGAR_URL
-a_url = requests.compat.urljoin(a_url, a_file)
+a_url = month_url
+a_url_fn = a_url + r"/" + a_file
 
 
-# def test_fetch_rss_head():
-#     assert fetch.fetch_rss(path=a_dir, period=a_period,
-#                            url=EDGAR_URL, head=True) in {200, 301, 403}
+def test_fetch_rss_err_dir():
+    with pytest.raises(FileNotFoundError):
+        assert fetch.fetch_rss(url=test_url, path=Path.cwd().joinpath('WRONG'))
 
 
-def test_fetch_rss_head_err():
-    with pytest.raises(requests.exceptions.ConnectionError):
-        fetch.fetch_rss(path=a_dir, period=a_period, url=WRONG_URL, head=True)
+def test_fetch_rss_head_oldmonth():
+    assert fetch.fetch_rss(url=oldmonth_url, path=a_dir,
+                           period=a_period, head=True) in {301, 403}
 
 
-# NOTE: Do this only when necessry
+def test_fetch_rss_head_month():
+    assert fetch.fetch_rss(url=month_url, path=a_dir,
+                           period=a_period, head=True) in {200, 403}
+
+
+# only done from time to time as it takes resources
 # def test_fetch_rss():
-#     assert fetch.fetch_rss(path=a_dir, period=a_period,
-#                            url=EDGAR_URL) in {200, 403}
+#     assert fetch.fetch_rss(url=month_url, path=a_dir,
+#                            period=a_period, overwrite=True) in {200, 403}
+
+
+def test_fetch_rss_err_exists():
+    with pytest.raises(FileExistsError):
+        assert fetch.fetch_rss(url=month_url, path=a_dir,
+                               period=a_period, overwrite=False)

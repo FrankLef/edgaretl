@@ -1,74 +1,62 @@
+import re
 from pathlib import Path
 from datetime import datetime
-import requests
-
-
-def write_path(path: Path, period: datetime = datetime.now(), check: bool = False) -> Path:
-    """Write the full file name for the rss feed file using a given path.
-
-    Args:
-        path (Path, optional): Basic path excluding file name where data will be stored.
-        period (datetime, optional):  Period whose year and month will be used to write the file name.
-        prefix (str, optional): prefix of filename. Defaults to 'edgar'.
-        ext (str, optional): Extension of the file. Defaults to '.xml'.
-        check (bool, optional): TRUE: reurn ValueError if file already exists.
-
-    Raises:
-        ValueError: path must be a pathlib.Path object.
-        FileExistsError: When check=True, file already exists.
-
-    Returns:
-        Path: Path where the xbrl rss file will be saved.
-    """
-    if not isinstance(path, Path):
-        msg = ("The data directory path must be a pathlib.Path object.")
-        raise ValueError(msg)
-    fn = write_fn(period=period)
-    path = path.joinpath(fn)
-    if check:
-        if path.exists:
-            msg = f"The file already exists.\n{path}"
-            raise FileExistsError(msg)
-    return path
 
 
 def write_fn(period: datetime = datetime.now(), prefix: str = 'xbrlrss', ext: str = '.xml') -> str:
-    fn = '-'.join((prefix, str(period.year), str(period.month).zfill(2))) + ext
-    return fn
-
-
-def write_url(url: str = 'https://www.sec.gov/Archives/edgar/monthly',
-              period: datetime = datetime.now(), check: bool = False) -> str:
-    """Write full url to of xbrl rss feed
+    """Write the filename with pattern prefix-YYYY-MM-.xml
 
     Args:
-        url (str, optional): Basic url of rss site. Defaults to 'https://www.sec.gov/Archives/edgar/monthly'.
-        period (datetime, optional): Period whose year and month will be used to write the url.
-        prefix (str, optional): Prefix of xbrl rss. Defaults to 'xbrlrss'.
-        ext (str, optional): File extension. Defaults to '.xml'.
-        check (bool, optional): True=Raise ValueError is url does not exist.
+        period (datetime, optional): Date from which year and month come. Defaults to datetime.now().
+        prefix (str, optional): The prefix for the filename. Defaults to 'xbrlrss'.
+        ext (str, optional): The extension of the file. Defaults to '.xml'.
 
     Raises:
-        ValueError: When check=True, url must be valid.
+        ValueError: The period is out-of-bound.
 
     Returns:
-        str: url for xbrl rss feed.
+        str: String with pattern prefix-YYYY-MM-.xml
     """
-    # the xbrl rss from EDGA begin in 2005-04. They are not available before.
+
+    # the xbrl rss from EDGAR begin in 2005-04. They are not available before.
     limits = (datetime(year=2005, month=4, day=1), datetime(2100, 1, 1))
     if period < limits[0] or period >= limits[1]:
         msg = f"The period must be between {limits[0]} and {limits[1]}.\nperiod: {period}"
         raise ValueError(msg)
 
-    fn = write_fn(period=period)
-    url = requests.compat.urljoin(url, fn)
+    fn = '-'.join((prefix, str(period.year), str(period.month).zfill(2))) + ext
 
-    # validate the url before using it
-    if check:
-        try:
-            with requests.head(url) as r:
-                return url
-        except requests.exceptions.ConnectionError as e:
-            msg = f"The url is invalid, verify it carefully.\n{url}"
-            raise requests.exceptions.ConnectionError(msg) from e
+    return fn
+
+
+def write_url(url: str, fn: str) -> str:
+    """Add the file name to the url.
+
+    Args:
+        url (str): The url before appending the filename.
+        fn (str): The filename without the directory path.
+
+    Raises:
+        ValueError: The url does not start with "http"
+
+    Returns:
+        str: The url including the file name
+    """
+
+    # this is also useful to ensure the length > 0
+    p = re.compile(r"http.+")
+    if not p.match(url):
+        msg = "The url must begin with \"http\".\n{url}"
+        raise ValueError(msg)
+
+    # concatenate the url with the file name, add / if there is none
+    # NOTE: do not use requests.compat.urljoin(), it creates problems
+    # problems by truncating anything after the last "/".add().
+    # Also, it removes a dependency.
+    p = re.compile(r"/$")
+    if p.search(url):
+        url = url + fn
+    else:
+        url = url + r"/" + fn
+
     return url
