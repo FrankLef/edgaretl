@@ -10,7 +10,7 @@ def fetch_rss(path: Path, period: datetime = datetime.now(),
     # add the filename to the path
     path = write.write_path(path=path, period=period, check=check_path)
     # create the directory if it doesn't already exist
-    path.parent.mkdir(parents=True, exist_ok=True)
+    # path.parent.mkdir(parents=True, exist_ok=True)
 
     # write the url
     url = write.write_url(url=url, period=period, check=check_url)

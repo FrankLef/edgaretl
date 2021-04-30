@@ -9,7 +9,7 @@ TEST_URL = 'https://httpbin.org'  # site build explicitly for testing, nice!
 WRONG_URL = "http://WRONG_URL"
 EDGAR_URL = 'http://www.sec.gov/Archives/edgar/monthly'
 
-a_period = datetime(2020, 1, 1)
+a_period = datetime(2021, 1, 1)
 a_dir = Path.cwd().joinpath('data', 'xbrlrss', str(a_period.year))
 a_file = "-".join(('xbrlrss', str(a_period.year),
                   str(a_period.month).zfill(2))) + '.xml'
