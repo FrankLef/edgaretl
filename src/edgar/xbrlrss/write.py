@@ -23,7 +23,6 @@ def write_path(path: Path, period: datetime = datetime.now(), check: bool = Fals
     if not isinstance(path, Path):
         msg = ("The data directory path must be a pathlib.Path object.")
         raise ValueError(msg)
-    # path.mkdir(parents=True, exist_ok=True)
     fn = write_fn(period=period)
     path = path.joinpath(fn)
     if check:
