@@ -18,7 +18,7 @@ month_url = registry.edgar_url(1)
 oldmonth_url = registry.edgar_url(2)
 
 
-a_period = datetime(2021, 1, 1)
+a_period = datetime(2020, 1, 1)
 # we use the prefix also for the subdirectory, discretionary
 a_dir = Path.cwd().joinpath('data', prefix, str(a_period.year))
 a_file = write.write_fn(period=a_period)

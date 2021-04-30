@@ -6,6 +6,22 @@ from src.edgar.xbrlrss import write
 
 def fetch_rss(url: str, path: Path = Path.cwd(), period: datetime = datetime.now(),
               head: bool = False, overwrite: bool = False):
+    """[summary]
+
+    Args:
+        url (str): URL with data files.
+        path (Path, optional): Location where data file will be downloaded. Defaults to Path.cwd().
+        period (datetime, optional): Date with the year and month used to name the file.. Defaults to datetime.now().
+        head (bool, optional): True=Do a http HEAD request method. Defaults to False.
+        overwrite (bool, optional): True=Overwrite existing file. Defaults to False.
+
+    Raises:
+        FileNotFoundError: The path to the download file does not exists. Must be created.
+        FileExistsError: The fie exists and will not be overwritten. Change overwrite=True to override this.
+
+    Returns:
+        [type]: [description]
+    """
 
     # create the file name and add it to the path
     if path.exists():
@@ -17,7 +33,9 @@ def fetch_rss(url: str, path: Path = Path.cwd(), period: datetime = datetime.now
 
     # don't process a file that already exists unless required
     if not head and path.exists and not overwrite:
-        msg = f"File already exists and will be skiped.\n{fn}"
+        msg = f"File already exists and will not be overwritten.\n"
+        msg += f"This can be changed with the argument \"overwrite\".\n"
+        msg += f"{fn}"
         raise FileExistsError(msg)
 
     # add filename to the url

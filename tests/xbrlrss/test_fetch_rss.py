@@ -13,7 +13,7 @@ egdar_url = registry.edgar_url(0)
 month_url = registry.edgar_url(1)
 oldmonth_url = registry.edgar_url(2)
 
-a_period = datetime(2021, 1, 1)
+a_period = datetime(2020, 1, 1)
 # we use 'xbrlrss' for the subdirectory
 a_dir = Path.cwd().joinpath('data', 'xbrlrss', str(a_period.year))
 a_file = write.write_fn(period=a_period)
