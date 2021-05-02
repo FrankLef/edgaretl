@@ -5,11 +5,18 @@ import requests
 from src.edgar import registry
 from src.edgar.xbrlrss import write
 
-prefix = registry.rss()
-test_url = registry.test_url()
+
+@pytest.fixture
+def prefix():
+    return registry.rss()
 
 
-def test_write_fn():
+@pytest.fixture
+def test_url():
+    return registry.test_url()
+
+
+def test_write_fn(prefix):
     """write_fn()
     """
     period = datetime.now()
@@ -29,7 +36,7 @@ def test_write_fn_err_period(per):
         write.write_fn(period=per)
 
 
-def test_write_url():
+def test_write_url(test_url):
     """write_url()
     """
     url = test_url
