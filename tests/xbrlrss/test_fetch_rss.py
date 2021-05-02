@@ -66,7 +66,7 @@ def test_fetch_rss_head_month(specs):
 
 
 # only done from time to time as it takes resources
-@pytest.mark.skip
+@pytest.mark.skip(reason="too slow")
 def test_fetch_rss(specs):
     assert fetch.fetch_rss(url=specs['url'], path=specs['dir'],
                            period=specs['period'], overwrite=True) in {200, 403}
