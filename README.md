@@ -8,3 +8,5 @@ Download XBRL files from EDGAR. This is done in 2 steps:
 * Download the xbrl using the specs provided by the rss feed.
 
 The rss files are located at <https://www.sec.gov/Archives/edgar/monthly> and give the url addresses of the xbrl files at EDGAR.
+
+test
