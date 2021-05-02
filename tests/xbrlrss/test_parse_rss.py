@@ -2,13 +2,24 @@ import pytest
 from pathlib import Path
 from datetime import datetime
 import feedparser
+from src.edgar import registry
 
 
 @pytest.fixture
-def file2020():
+def dir_2020():
+    return registry.rss_path(0)
+
+
+@pytest.fixture
+def file_2020():
+    return registry.rss_file(0)
+
+
+@pytest.fixture
+def fn2020(dir_2020, file_2020):
     """Path, as a string, to xbrlrss-2020-01.xml.
     """
-    f = str(Path.cwd().joinpath('data', 'xbrlrss', '2020', 'xbrlrss-2020-01.xml'))
+    f = Path(dir_2020).joinpath(file_2020)
     return(f)
 
 
@@ -40,10 +51,10 @@ def data2020():
 
 
 @pytest.fixture
-def fpd2020(file2020):
+def fpd2020(fn2020):
     """Create a feed parser dictionary from xbrlrss-2020-01.xml.
     """
-    return feedparser.parse(file2020)
+    return feedparser.parse(fn2020)
 
 
 def test_feed(fpd2020, data2020):

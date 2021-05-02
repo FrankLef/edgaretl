@@ -8,7 +8,7 @@ from src.edgar.xbrlrss import write
 
 @pytest.fixture
 def prefix():
-    return registry.rss()
+    return registry.rss_prefix()
 
 
 @pytest.fixture

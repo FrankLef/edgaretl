@@ -9,6 +9,11 @@ from src.edgar.xbrlrss import fetch
 
 
 @pytest.fixture
+def dir_2020():
+    return registry.rss_path(0)
+
+
+@pytest.fixture
 def test_url():
     return registry.test_url()
 
@@ -29,9 +34,9 @@ def oldmonth_url():
 
 
 @pytest.fixture
-def specs(month_url):
+def specs(dir_2020, month_url):
     per = datetime(2020, 1, 1)
-    a_dir = Path.cwd().joinpath('data', 'xbrlrss', str(per.year))
+    a_dir = Path(dir_2020)
     fn = write.write_fn(period=per)
     path = a_dir.joinpath(fn)
     url = month_url

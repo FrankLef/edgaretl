@@ -13,6 +13,11 @@ EDGAR_URL_MONTH = 'https://www.sec.gov/Archives/edgar/monthly'
 EDGAR_URL_MONTH_OLD = 'http://www.sec.gov/Archives/edgar/monthly'
 EDGAR_XBRLRSS = 'xbrlrss'
 
+RSS_2020_PATH = r'C:\Users\Public\MyPy\data\edgar\xbrlrss\2020'
+RSS_202001_FILE = 'xbrlrss-2020-01.xml'
+RSS_2021_PATH = r'C:\Users\Public\MyPy\data\edgar\xbrlrss\2021'
+RSS_202101_FILE = 'xbrlrss-2021-01.xml'
+
 
 def test_url(choice: int = 0):
     val = (EXAMPLE_URL, SIMPLE_URL)
@@ -24,7 +29,17 @@ def edgar_url(choice: int = 0):
     return val[choice]
 
 
-def rss():
+def rss_path(choice: int = 0):
+    val = (RSS_2020_PATH, RSS_2021_PATH)
+    return(val[choice])
+
+
+def rss_file(choice: int = 0):
+    val = (RSS_202001_FILE, RSS_202101_FILE)
+    return(val[choice])
+
+
+def rss_prefix():
     """The prefix used to create te rss feed file.
 
     Returns:
