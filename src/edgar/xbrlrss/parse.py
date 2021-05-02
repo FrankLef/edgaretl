@@ -45,11 +45,11 @@ def parse_rss_channel(fpd: feedparser.util.FeedParserDict) -> dict:
                        'language': fpd.feed['language'],
                        'pubDate': pubDate_datetime,
                        'items_nb': n}
+
     return data
 
 
 def parse_rss_entry(entry: dict) -> dict:
-
     pubDate_datetime = datetime.fromtimestamp(mktime(item['published_parsed']))
     data = {'title': entry['title'],
             'pubDate': pubDate_datetime,
