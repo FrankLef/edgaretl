@@ -47,8 +47,6 @@ def fetch_rss(url: str, path: Path = Path.cwd(), period: datetime = datetime.now
             with path.open(mode='w') as f:
                 if r.status_code == 200:
                     f.write(r.text)
-                    # msg = f"\"{fn}\" download OK. Content length = {r.headers['content-length']}"
-                    # print(msg)
     else:
         with requests.head(url_fn) as r:
             pass

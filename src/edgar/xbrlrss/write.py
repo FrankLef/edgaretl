@@ -25,6 +25,7 @@ def write_fn(period: datetime = datetime.now(), prefix: str = 'xbrlrss', ext: st
         raise ValueError(msg)
 
     fn = '-'.join((prefix, str(period.year), str(period.month).zfill(2))) + ext
+    assert len(fn) > len(ext)
 
     return fn
 
