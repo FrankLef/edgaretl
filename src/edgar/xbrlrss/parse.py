@@ -6,7 +6,7 @@ import feedparser
 
 def parse_rss(file: str, ndx: int = -1, prefix: str = 'item') -> dict:
     fpd = feedparser.parse(file)
-    n = len(fp.entries)
+    n = len(fpd.entries)
     if not n:
         msg = "There is no entry in the feed."
         raise ValueError(msg)
@@ -44,13 +44,14 @@ def parse_rss_channel(fpd: feedparser.util.FeedParserDict) -> dict:
     data['channel'] = {'title': fpd.feed['title'],
                        'language': fpd.feed['language'],
                        'pubDate': pubDate_datetime,
-                       'items_nb': n}
+                       'items_nb': len(fpd.entries)}
 
     return data
 
 
 def parse_rss_entry(entry: dict) -> dict:
-    pubDate_datetime = datetime.fromtimestamp(mktime(item['published_parsed']))
+    pubDate_datetime = datetime.fromtimestamp(
+        mktime(entry['published_parsed']))
     data = {'title': entry['title'],
             'pubDate': pubDate_datetime,
             'edgar:companyName': entry['edgar_companyname'],
@@ -60,7 +61,7 @@ def parse_rss_entry(entry: dict) -> dict:
             'edgar:period': entry['edgar_period'],
             'edgar:fiscalyearend': entry['edgar_fiscalyearend']}
 
-    enclosures = [x for x in links if x['rel'] == 'enclosure']
+    enclosures = [x for x in entry['links'] if x['rel'] == 'enclosure']
     if len(enclosures):
         enclosure = enclosures[0]
         enclosure_len = enclosure['length']
