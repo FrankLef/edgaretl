@@ -11,11 +11,11 @@ with open('LICENSE') as f:
     license = f.read()
 
 setup(
-    name='edgar',
+    name='edgar_etl',
     version='0.1.0',
-    description='Downlad XBRL files from EDGAR',
+    description='ETL for XBRL files from EDGAR',
     long_description=readme,
-    author='Kenneth Reitz',
+    author='François Lefebvre',
     author_email='flefebvre01@hotmail.com',
     url='https://github.com/FrankLef/edgar.git',
     license=license,
