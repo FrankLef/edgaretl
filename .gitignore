@@ -127,3 +127,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+edgar_etl.code-workspace
