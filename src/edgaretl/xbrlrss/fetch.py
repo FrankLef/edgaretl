@@ -1,7 +1,7 @@
 from pathlib import Path
 from datetime import datetime
 import requests
-from src.edgar.xbrlrss import write
+from src.edgaretl.xbrlrss import write
 
 
 def fetch_rss(url: str, path: Path = Path.cwd(), period: datetime = datetime.now(),

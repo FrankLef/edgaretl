@@ -2,8 +2,8 @@ import pytest
 from pathlib import Path
 from datetime import datetime
 import requests
-from src.edgar import registry
-from src.edgar.xbrlrss import write
+from src.edgaretl import registry
+from src.edgaretl.xbrlrss import write
 
 
 @pytest.fixture

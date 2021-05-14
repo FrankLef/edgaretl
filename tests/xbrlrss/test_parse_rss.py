@@ -2,7 +2,7 @@ import pytest
 from pathlib import Path
 from datetime import datetime
 import feedparser
-from src.edgar import registry
+from src.edgaretl import registry
 
 
 @pytest.fixture
